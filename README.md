@@ -40,12 +40,12 @@ CTS Inspector is a mobile application developed using Flutter for conducting cle
    
 2. **Install Dependencies:**
   ```bash
-  flutter pub get
+   flutter pub get
   ```
 
 3. **Run the App:**
   ```bash
-  flutter run
+   flutter run
   ```
 
 ---
@@ -58,6 +58,12 @@ CTS Inspector is a mobile application developed using Flutter for conducting cle
 - Theme toggle (light/dark)
 - Summary view & validation before submission
 - Toasts and dialog feedback
+
+---
+
+## 🎬 Demo Video
+
+▶️ [Watch the Demo Video](https://drive.google.com/drive/u/0/folders/1tySSh7i0gqDjuvQ6WRRetcwTWVOS207t)
 
 ---
 
