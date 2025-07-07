@@ -39,14 +39,14 @@ CTS Inspector is a mobile application developed using Flutter for conducting cle
    ```
    
 2. **Install Dependencies:**
-  ```bash
+   ```bash
    flutter pub get
-  ```
+   ```
 
 3. **Run the App:**
-  ```bash
+   ```bash
    flutter run
-  ```
+   ```
 
 ---
 
