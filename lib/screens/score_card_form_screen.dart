@@ -6,8 +6,12 @@ import '../models/score_parameter.dart';
 import '../providers/form_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/api_service.dart';
+import '../services/pdf_generator.dart';
+import '../services/pdf_utils.dart';
 import '../widgets/section_card.dart';
 import '../utils/constants.dart';
+import '../services/pdf_generator.dart';
+import '../services/pdf_utils.dart';
 
 class ScoreCardFormScreen extends StatefulWidget {
   @override
@@ -31,7 +35,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
       vsync: this,
     );
 
-    // Initialize controllers with existing data
     _stationNameController.text = formProvider.stationName;
     _inspectorNameController.text = formProvider.inspectorName;
     _remarksController.text = formProvider.additionalRemarks;
@@ -258,7 +261,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
             ),
           ),
 
-          // Error Display
           if (formProvider.error != null)
             Card(
               color: Colors.red.shade50,
@@ -350,7 +352,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
           gravity: ToastGravity.BOTTOM,
         );
 
-        // Show success dialog with option to clear form
         _showSuccessDialog(context, formProvider, result);
       } else {
         Fluttertoast.showToast(
@@ -454,7 +455,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Basic Information Summary
                 _buildSummaryCard(
                   'Basic Information',
                   [
@@ -464,8 +464,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // Overall Score Summary
                 _buildSummaryCard(
                   'Overall Score',
                   [
@@ -475,8 +473,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // Section Scores Summary
                 _buildSummaryCard(
                   'Section Scores',
                   formProvider.sections.map((section) {
@@ -486,8 +482,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
                     return '${section.title}: $score/$maxScore (${percentage.toStringAsFixed(1)}%)';
                   }).toList(),
                 ),
-
-                // Additional Remarks
                 if (formProvider.additionalRemarks.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   _buildSummaryCard(
@@ -495,8 +489,6 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
                     [formProvider.additionalRemarks],
                   ),
                 ],
-
-                // Validation Status
                 const SizedBox(height: 16),
                 _buildSummaryCard(
                   'Form Status',
@@ -523,6 +515,19 @@ class _ScoreCardFormScreenState extends State<ScoreCardFormScreen>
                 _submitForm(formProvider);
               },
               child: const Text('Submit Form'),
+            ),
+          if (formProvider.validateForm() &&
+              formProvider.stationName.isNotEmpty &&
+              formProvider.inspectorName.isNotEmpty)
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                final pdfBytes = await PdfGenerator.generateInspectionReport(formProvider);
+                final filePath = await PdfUtils.savePdf(pdfBytes, 'inspection_report.pdf');
+                Fluttertoast.showToast(msg: 'PDF saved to $filePath');
+                await PdfUtils.openPdf(filePath);
+              },
+              child: const Text('Generate & Save PDF'),
             ),
         ],
       ),
